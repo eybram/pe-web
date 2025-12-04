@@ -23,21 +23,21 @@ export function Sidebar({
       )}
 
       <aside
-        className={`fixed md:relative md:block w-64 bg-black border-r-4 border-[#FF5757] overflow-y-auto z-40 transition-transform ${
+        className={`fixed md:relative md:block w-64 bg-black border-r-4 border-[#ff5d23] overflow-y-auto z-40 transition-transform ${
           isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
         {!isOpen && onClose && (
           <button
             onClick={onClose}
-            className="md:hidden absolute top-4 right-4 text-[#FF5757]"
+            className="md:hidden absolute top-4 right-4 text-[#ff5d23]"
           >
             <X className="w-6 h-6" />
           </button>
         )}
 
         <div className="p-6">
-          <h2 className="text-xl font-black text-[#FF5757] mb-6 border-b-2 border-[#FF5757] pb-4">
+          <h2 className="text-xl font-black text-[#ff5d23] mb-6 border-b-2 border-[#ff5d23] pb-4">
             CATEGORÍAS
           </h2>
 
@@ -46,8 +46,8 @@ export function Sidebar({
               onClick={() => onCategorySelect(null)}
               className={`w-full text-left px-4 py-3 rounded-lg font-bold transition ${
                 selectedCategory === null
-                  ? 'bg-[#FF5757] text-black'
-                  : 'text-[#FF5757] hover:bg-[#FF5757]/10'
+                  ? 'bg-[#ff5d23] text-black'
+                  : 'text-[#ff5d23] hover:bg-[#ff5d23]/10'
               }`}
             >
               TODOS
@@ -59,8 +59,8 @@ export function Sidebar({
                 onClick={() => onCategorySelect(category.id)}
                 className={`w-full text-left px-4 py-3 rounded-lg font-bold transition ${
                   selectedCategory === category.id
-                    ? 'bg-[#FF5757] text-black'
-                    : 'text-[#FF5757] hover:bg-[#FF5757]/10'
+                    ? 'bg-[#ff5d23] text-black'
+                    : 'text-[#ff5d23] hover:bg-[#ff5d23]/10'
                 }`}
               >
                 <div className="flex justify-between items-center">

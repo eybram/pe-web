@@ -12,7 +12,7 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
       onClick={onClick}
       className="group cursor-pointer h-full"
     >
-      <div className="relative overflow-hidden rounded-lg bg-gray-900 aspect-square mb-3 border-2 border-[#FF5757] hover:border-white transition">
+      <div className="relative overflow-hidden rounded-lg bg-gray-900 aspect-square mb-3 border-2 border-[#ff5d23] hover:border-white transition">
         <img
           src={product.image}
           alt={product.name}
@@ -23,11 +23,11 @@ export function ProductCard({ product, onClick }: ProductCardProps) {
         </div>
       </div>
 
-      <h3 className="font-bold text-sm text-white group-hover:text-[#FF5757] transition line-clamp-2 text-left">
+      <h3 className="font-bold text-sm text-white group-hover:text-[#ff5d23] transition line-clamp-2 text-left">
         {product.name}
       </h3>
 
-      <p className="text-[#FF5757] font-bold text-lg mt-1 text-left">
+      <p className="text-[#ff5d23] font-bold text-lg mt-1 text-left">
         ${product.price.toFixed(2)} USD
       </p>
     </button>

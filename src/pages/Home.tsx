@@ -55,7 +55,7 @@ export function Home() {
 
         <main className="flex-1">
           <div className="max-w-7xl mx-auto px-4 py-8">
-            <h2 className="text-2xl font-black text-[#FF5757] mb-8">
+            <h2 className="text-2xl font-black text-[#ff5d23] mb-8">
               {selectedCategory
                 ? categories.find(c => c.id === selectedCategory)?.name
                 : 'TODOS LOS PRODUCTOS'}

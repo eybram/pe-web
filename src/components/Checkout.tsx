@@ -36,15 +36,15 @@ export function Checkout({ cartItems, total, onClose, onSuccess }: CheckoutProps
       <div className="w-full max-w-6xl grid md:grid-cols-3 gap-6">
         {/* Checkout Form */}
         <div className="md:col-span-2">
-          <div className="bg-black border-4 border-[#FF5757] rounded-2xl p-8 relative">
+          <div className="bg-black border-4 border-[#ff5d23] rounded-2xl p-8 relative">
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 text-[#FF5757] hover:text-white transition"
+              className="absolute top-4 right-4 text-[#ff5d23] hover:text-white transition"
             >
               <X className="w-6 h-6" />
             </button>
 
-            <h1 className="text-3xl font-black text-[#FF5757] text-center mb-2">
+            <h1 className="text-3xl font-black text-[#ff5d23] text-center mb-2">
               BROKEN POCKET
             </h1>
 
@@ -61,7 +61,7 @@ export function Checkout({ cartItems, total, onClose, onSuccess }: CheckoutProps
                   className={`px-8 py-3 rounded-full font-bold border-2 transition ${
                     paymentMethod === 'email'
                       ? 'bg-white text-black border-white'
-                      : 'bg-black text-white border-gray-700 hover:border-[#FF5757]'
+                      : 'bg-black text-white border-gray-700 hover:border-[#ff5d23]'
                   }`}
                 >
                   Email
@@ -72,7 +72,7 @@ export function Checkout({ cartItems, total, onClose, onSuccess }: CheckoutProps
                   className={`px-8 py-3 rounded-full font-bold border-2 transition ${
                     paymentMethod === 'paypal'
                       ? 'bg-white text-black border-white'
-                      : 'bg-black text-white border-gray-700 hover:border-[#FF5757]'
+                      : 'bg-black text-white border-gray-700 hover:border-[#ff5d23]'
                   }`}
                 >
                   PayPal
@@ -83,7 +83,7 @@ export function Checkout({ cartItems, total, onClose, onSuccess }: CheckoutProps
                   className={`px-8 py-3 rounded-full font-bold border-2 transition ${
                     paymentMethod === 'google'
                       ? 'bg-white text-black border-white'
-                      : 'bg-black text-white border-gray-700 hover:border-[#FF5757]'
+                      : 'bg-black text-white border-gray-700 hover:border-[#ff5d23]'
                   }`}
                 >
                   Google Pay
@@ -96,7 +96,7 @@ export function Checkout({ cartItems, total, onClose, onSuccess }: CheckoutProps
                   Email
                 </label>
                 <div className="flex items-center bg-gray-800 rounded-lg px-4 border border-gray-700">
-                  <span className="text-[#FF5757] text-xl mr-3">👤</span>
+                  <span className="text-[#ff5d23] text-xl mr-3">👤</span>
                   <input
                     type="email"
                     name="email"
@@ -120,7 +120,7 @@ export function Checkout({ cartItems, total, onClose, onSuccess }: CheckoutProps
                   value={formData.region}
                   onChange={handleInputChange}
                   placeholder="Panamá, Panamá Oeste"
-                  className="w-full px-4 py-3 bg-white text-black placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5757] font-semibold"
+                  className="w-full px-4 py-3 bg-white text-black placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] font-semibold"
                   required
                 />
               </div>
@@ -133,7 +133,7 @@ export function Checkout({ cartItems, total, onClose, onSuccess }: CheckoutProps
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="Nombre"
-                  className="px-4 py-3 bg-white text-black placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5757] font-semibold"
+                  className="px-4 py-3 bg-white text-black placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] font-semibold"
                   required
                 />
                 <input
@@ -142,7 +142,7 @@ export function Checkout({ cartItems, total, onClose, onSuccess }: CheckoutProps
                   value={formData.lastname}
                   onChange={handleInputChange}
                   placeholder="Apellido"
-                  className="px-4 py-3 bg-white text-black placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5757] font-semibold"
+                  className="px-4 py-3 bg-white text-black placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] font-semibold"
                   required
                 />
               </div>
@@ -158,7 +158,7 @@ export function Checkout({ cartItems, total, onClose, onSuccess }: CheckoutProps
                   value={formData.address}
                   onChange={handleInputChange}
                   placeholder="Calle principal, casa 5232A"
-                  className="w-full px-4 py-3 bg-white text-black placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FF5757] font-semibold"
+                  className="w-full px-4 py-3 bg-white text-black placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] font-semibold"
                   required
                 />
               </div>
@@ -175,7 +175,7 @@ export function Checkout({ cartItems, total, onClose, onSuccess }: CheckoutProps
         </div>
 
         {/* Cart Summary */}
-        <div className="bg-gray-800 border-4 border-[#FF5757] rounded-2xl p-6 h-fit">
+        <div className="bg-gray-800 border-4 border-[#ff5d23] rounded-2xl p-6 h-fit">
           <h3 className="text-2xl font-black text-white mb-6">TU CARRO</h3>
 
           <div className="space-y-4 mb-6 max-h-64 overflow-y-auto">
@@ -185,13 +185,13 @@ export function Checkout({ cartItems, total, onClose, onSuccess }: CheckoutProps
                   <img
                     src={item.product.image}
                     alt={item.product.name}
-                    className="w-12 h-12 object-cover rounded border border-[#FF5757]"
+                    className="w-12 h-12 object-cover rounded border border-[#ff5d23]"
                   />
                   <div className="flex-1">
                     <h4 className="text-white font-bold text-sm line-clamp-2">
                       {item.product.name}
                     </h4>
-                    <p className="text-[#FF5757] font-bold text-sm">
+                    <p className="text-[#ff5d23] font-bold text-sm">
                       ${item.product.price.toFixed(2)} USD
                     </p>
                   </div>
@@ -203,14 +203,14 @@ export function Checkout({ cartItems, total, onClose, onSuccess }: CheckoutProps
             ))}
           </div>
 
-          <div className="border-t-2 border-[#FF5757] pt-4 space-y-3">
+          <div className="border-t-2 border-[#ff5d23] pt-4 space-y-3">
             <div className="flex justify-between">
               <span className="text-white font-bold">Subtotal:</span>
               <span className="text-white font-black text-lg">
                 ${total.toFixed(2)}
               </span>
             </div>
-            <button className="w-full bg-[#FF5757] text-black font-black py-3 rounded-lg hover:bg-white transition">
+            <button className="w-full bg-[#ff5d23] text-black font-black py-3 rounded-lg hover:bg-white transition">
               CONFIRMAR
             </button>
             <a href="#" className="block text-gray-400 text-center text-sm hover:text-white transition underline">
