@@ -5,6 +5,7 @@ import { ProductCard } from '../components/ProductCard';
 import { ProductDetail } from '../components/ProductDetail';
 import { Cart } from '../components/Cart';
 import { Login } from '../components/Login';
+import { Register } from '../components/Register';
 import { Checkout } from '../components/Checkout';
 import { Product } from '../types';
 import { products, categories } from '../data/products';
@@ -16,6 +17,7 @@ export function Home() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showCart, setShowCart] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { cart, addToCart, removeFromCart, updateQuantity, total, itemCount } = useCart();
@@ -108,6 +110,17 @@ export function Home() {
         <Login
           onClose={() => setShowLogin(false)}
           onSuccess={() => setShowLogin(false)}
+          onOpenRegister={() => {
+            setShowLogin(false);
+            setShowRegister(true);
+          }}
+        />
+      )}
+
+      {showRegister && (
+        <Register
+          onClose={() => setShowRegister(false)}
+          onSuccess={() => setShowRegister(false)}
         />
       )}
 

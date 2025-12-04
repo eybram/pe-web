@@ -1,19 +1,20 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 
-interface LoginProps {
+interface RegisterProps {
   onClose: () => void;
   onSuccess: () => void;
-  onOpenRegister?: () => void;
 }
 
-export function Login({ onClose, onSuccess }: LoginProps) {
+export function Register({ onClose, onSuccess }: RegisterProps) {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email && password) {
+    if (email && password && password === confirm) {
       onSuccess();
     }
   };
@@ -28,38 +29,54 @@ export function Login({ onClose, onSuccess }: LoginProps) {
           <X className="w-6 h-6" />
         </button>
 
-        <h1 className="text-3xl font-black text-[#ff5d23] text-center mb-2">
-          BROKEN POCKET
-        </h1>
+        <h1 className="text-3xl font-black text-[#ff5d23] text-center mb-2">BROKEN POCKET</h1>
 
-        <h2 className="text-white font-bold text-lg text-center mb-8">
-          Inicio de sesión
-        </h2>
+        <h2 className="text-white font-bold text-lg text-center mb-8">Registrarse</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-gray-400 text-xs font-bold mb-2 block">
-              Email
-            </label>
+            <label className="text-gray-400 text-xs font-bold mb-2 block">Nombre</label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="lilith@gmail.com"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Nombre completo"
               className="w-full px-4 py-3 bg-gray-800 text-white placeholder-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] border border-gray-700"
               required
             />
           </div>
 
           <div>
-            <label className="text-gray-400 text-xs font-bold mb-2 block">
-              Contraseña
-            </label>
+            <label className="text-gray-400 text-xs font-bold mb-2 block">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="tu@ejemplo.com"
+              className="w-full px-4 py-3 bg-gray-800 text-white placeholder-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] border border-gray-700"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="text-gray-400 text-xs font-bold mb-2 block">Contraseña</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••••••"
+              placeholder="••••••••"
+              className="w-full px-4 py-3 bg-gray-800 text-[#ff5d23] placeholder-[#ff5d23]/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] border border-gray-700"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="text-gray-400 text-xs font-bold mb-2 block">Confirmar contraseña</label>
+            <input
+              type="password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              placeholder="••••••••"
               className="w-full px-4 py-3 bg-gray-800 text-[#ff5d23] placeholder-[#ff5d23]/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] border border-gray-700"
               required
             />
@@ -67,22 +84,21 @@ export function Login({ onClose, onSuccess }: LoginProps) {
 
           <button
             type="submit"
-            disabled={!email || !password}
+            disabled={!email || !password || password !== confirm}
             className="w-full bg-gray-700 text-[#ff5d23] font-bold py-3 rounded-lg hover:bg-gray-600 transition disabled:opacity-50 disabled:cursor-not-allowed mt-6"
           >
-            Continúe
+            Registrarse
           </button>
         </form>
 
         <div className="mt-6 pt-6 border-t border-gray-700">
-          <p className="text-gray-400 text-sm text-center">
-            ¿No tienes cuenta?{' '}
+          <p className="text-gray-400 text-sm text-center">Ya tienes cuenta?{' '}
             <button
               type="button"
-              onClick={() => onOpenRegister && onOpenRegister()}
+              onClick={onClose}
               className="text-[#ff5d23] font-bold hover:text-white transition"
             >
-              Regístrate
+              Inicia sesión
             </button>
           </p>
         </div>
