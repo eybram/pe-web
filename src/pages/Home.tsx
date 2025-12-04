@@ -121,6 +121,10 @@ export function Home() {
         <Register
           onClose={() => setShowRegister(false)}
           onSuccess={() => setShowRegister(false)}
+          onOpenLogin={() => {
+            setShowRegister(false);
+            setShowLogin(true);
+          }}
         />
       )}
 

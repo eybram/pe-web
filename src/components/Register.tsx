@@ -4,9 +4,10 @@ import { X } from 'lucide-react';
 interface RegisterProps {
   onClose: () => void;
   onSuccess: () => void;
+  onOpenLogin?: () => void;
 }
 
-export function Register({ onClose, onSuccess }: RegisterProps) {
+export function Register({ onClose, onSuccess, onOpenLogin }: RegisterProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -95,7 +96,10 @@ export function Register({ onClose, onSuccess }: RegisterProps) {
           <p className="text-gray-400 text-sm text-center">Ya tienes cuenta?{' '}
             <button
               type="button"
-              onClick={onLoginClick}
+              onClick={() => {
+                onClose();
+                onOpenLogin && onOpenLogin();
+              }}
               className="text-[#ff5d23] font-bold hover:text-white transition"
             >
               Inicia sesión
