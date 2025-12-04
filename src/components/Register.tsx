@@ -20,7 +20,7 @@ export function Register({ onClose, onSuccess }: RegisterProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-[#F5D7C1] z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-[#001937] z-50 flex items-center justify-center p-4">
       <div className="bg-black border-4 border-[#ff5d23] rounded-2xl w-full max-w-md p-8 relative">
         <button
           onClick={onClose}

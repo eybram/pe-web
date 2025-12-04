@@ -32,7 +32,7 @@ export function Checkout({ cartItems, total, onClose, onSuccess }: CheckoutProps
   };
 
   return (
-    <div className="fixed inset-0 bg-[#F5D7C1] z-50 flex items-center justify-center p-4 overflow-auto">
+    <div className="fixed inset-0 bg-[#001937] z-50 flex items-center justify-center p-4 overflow-auto">
       <div className="w-full max-w-6xl grid md:grid-cols-3 gap-6">
         {/* Checkout Form */}
         <div className="md:col-span-2">
