@@ -7,9 +7,10 @@ interface CartProps {
   onRemove: (productId: string, size?: string) => void;
   onUpdateQuantity: (productId: string, quantity: number, size?: string) => void;
   onClose: () => void;
+  onCheckout: () => void;
 }
 
-export function Cart({ items, total, onRemove, onUpdateQuantity, onClose }: CartProps) {
+export function Cart({ items, total, onRemove, onUpdateQuantity, onClose, onCheckout }: CartProps) {
   return (
     <div className="fixed inset-0 bg-black/75 z-50 flex items-end md:items-center justify-center">
       <div className="bg-black border-4 border-[#FF5757] rounded-t-2xl md:rounded-2xl w-full md:w-96 max-h-screen md:max-h-[600px] flex flex-col">
@@ -101,7 +102,7 @@ export function Cart({ items, total, onRemove, onUpdateQuantity, onClose }: Cart
                   ${total.toFixed(2)}
                 </span>
               </div>
-              <button className="w-full bg-[#FF5757] text-black font-black py-3 rounded-lg hover:bg-white transition">
+              <button onClick={onCheckout} className="w-full bg-[#FF5757] text-black font-black py-3 rounded-lg hover:bg-white transition">
                 PAGAR EN CAJA
               </button>
             </div>

@@ -4,6 +4,8 @@ import { Sidebar } from '../components/Sidebar';
 import { ProductCard } from '../components/ProductCard';
 import { ProductDetail } from '../components/ProductDetail';
 import { Cart } from '../components/Cart';
+import { Login } from '../components/Login';
+import { Checkout } from '../components/Checkout';
 import { Product } from '../types';
 import { products, categories } from '../data/products';
 import { useCart } from '../hooks/useCart';
@@ -13,6 +15,8 @@ export function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showCart, setShowCart] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { cart, addToCart, removeFromCart, updateQuantity, total, itemCount } = useCart();
 
@@ -37,6 +41,7 @@ export function Home() {
         cartItemCount={itemCount}
         onCartClick={() => setShowCart(true)}
         onMenuClick={() => setSidebarOpen(true)}
+        onLoginClick={() => setShowLogin(true)}
       />
 
       <div className="flex">
@@ -92,6 +97,29 @@ export function Home() {
           onRemove={removeFromCart}
           onUpdateQuantity={updateQuantity}
           onClose={() => setShowCart(false)}
+          onCheckout={() => {
+            setShowCart(false);
+            setShowCheckout(true);
+          }}
+        />
+      )}
+
+      {showLogin && (
+        <Login
+          onClose={() => setShowLogin(false)}
+          onSuccess={() => setShowLogin(false)}
+        />
+      )}
+
+      {showCheckout && (
+        <Checkout
+          cartItems={cart}
+          total={total}
+          onClose={() => setShowCheckout(false)}
+          onSuccess={() => {
+            setShowCheckout(false);
+            // Could add success message or clear cart here
+          }}
         />
       )}
     </div>
