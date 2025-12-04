@@ -23,7 +23,7 @@ export function Sidebar({
       )}
 
       <aside
-        className={`fixed md:relative md:block w-64 h-screen bg-[#001937] border-r-4 border-[#FF5757] overflow-y-auto z-40 transition-transform ${
+        className={`fixed md:relative md:block w-64 h-screen bg-black border-r-4 border-[#FF5757] overflow-y-auto z-40 transition-transform ${
           isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
