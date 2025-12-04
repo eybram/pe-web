@@ -95,7 +95,7 @@ export function Register({ onClose, onSuccess }: RegisterProps) {
           <p className="text-gray-400 text-sm text-center">Ya tienes cuenta?{' '}
             <button
               type="button"
-              onClick={onClose}
+              onClick={onLoginClick}
               className="text-[#ff5d23] font-bold hover:text-white transition"
             >
               Inicia sesión
