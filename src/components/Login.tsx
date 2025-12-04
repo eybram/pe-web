@@ -7,7 +7,7 @@ interface LoginProps {
   onOpenRegister?: () => void;
 }
 
-export function Login({ onClose, onSuccess }: LoginProps) {
+export function Login({ onClose, onSuccess, onOpenRegister }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
