@@ -102,7 +102,7 @@ export function Checkout({ cartItems, total, onClose, onSuccess }: CheckoutProps
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    placeholder="example@gmail.com"
+                    placeholder="ejemplo@gmail.com"
                     className="flex-1 py-3 bg-transparent text-white placeholder-gray-600 focus:outline-none"
                     required
                   />
