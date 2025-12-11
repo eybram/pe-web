@@ -14,6 +14,28 @@
 
 declare(strict_types=1);
 
+// Load variables from a .env file in the backend directory if present (non-destructive)
+if (file_exists(__DIR__ . '/.env')) {
+    $lines = file(__DIR__ . '/.env', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '' || strpos($line, '#') === 0) continue;
+        $pair = explode('=', $line, 2);
+        if (count($pair) !== 2) continue;
+        $key = trim($pair[0]);
+        $value = trim($pair[1]);
+        // Remove surrounding quotes if any
+        if ((str_starts_with($value, '"') && str_ends_with($value, '"')) || (str_starts_with($value, "'") && str_ends_with($value, "'"))) {
+            $value = substr($value, 1, -1);
+        }
+        if (getenv($key) === false) {
+            putenv($key . '=' . $value);
+            $_ENV[$key] = $value;
+            $_SERVER[$key] = $value;
+        }
+    }
+}
+
 function getPDO(): PDO
 {
     $driver = strtolower(getenv('DB_DRIVER') ?: 'sqlsrv');
