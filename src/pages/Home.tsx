@@ -7,6 +7,10 @@ import { Cart } from '../components/Cart';
 import { Login } from '../components/Login';
 import { Register } from '../components/Register';
 import { Checkout } from '../components/Checkout';
+import { Profile } from '../components/Profile';
+import { Settings } from '../components/Settings';
+import { History } from '../components/History';
+import { LogoutModal } from '../components/LogoutModal';
 import { Product } from '../types';
 import { products, categories } from '../data/products';
 import { useCart } from '../hooks/useCart';
@@ -19,6 +23,10 @@ export function Home() {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { cart, addToCart, removeFromCart, updateQuantity, total, itemCount } = useCart();
 
@@ -34,6 +42,12 @@ export function Home() {
       addToCart(selectedProduct, quantity, size);
       setSelectedProduct(null);
     }
+  };
+
+  const handleLogout = () => {
+    setShowLogoutModal(false);
+    // Handle logout logic here
+    console.log('User logged out');
   };
 
   return (
@@ -53,6 +67,22 @@ export function Home() {
           onCategorySelect={setSelectedCategory}
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
+          onProfileClick={() => {
+            setShowProfile(true);
+            setSidebarOpen(false);
+          }}
+          onSettingsClick={() => {
+            setShowSettings(true);
+            setSidebarOpen(false);
+          }}
+          onHistoryClick={() => {
+            setShowHistory(true);
+            setSidebarOpen(false);
+          }}
+          onLogoutClick={() => {
+            setShowLogoutModal(true);
+            setSidebarOpen(false);
+          }}
         />
 
         <main className="flex-1">
@@ -137,6 +167,25 @@ export function Home() {
             setShowCheckout(false);
             // Could add success message or clear cart here
           }}
+        />
+      )}
+
+      {showProfile && (
+        <Profile onClose={() => setShowProfile(false)} />
+      )}
+
+      {showSettings && (
+        <Settings onClose={() => setShowSettings(false)} />
+      )}
+
+      {showHistory && (
+        <History onClose={() => setShowHistory(false)} />
+      )}
+
+      {showLogoutModal && (
+        <LogoutModal
+          onClose={() => setShowLogoutModal(false)}
+          onConfirm={handleLogout}
         />
       )}
     </div>
