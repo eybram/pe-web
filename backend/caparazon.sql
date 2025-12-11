@@ -9,11 +9,11 @@ CREATE TABLE Cliente (
     telefono NVARCHAR(20),
     provincia NVARCHAR(50) NOT NULL,
     fecha_registro DATE NOT NULL DEFAULT(GETDATE()),
-    contrase�a NVARCHAR(100) NOT NULL,
+    contraseña NVARCHAR(100) NOT NULL,
     CONSTRAINT PK_Cliente PRIMARY KEY (id_cliente),
     CONSTRAINT CHK_Cliente_Cedula CHECK (LEN(cedula) >= 5),
     CONSTRAINT CHK_Cliente_Correo CHECK (correo LIKE '%@%'),
-    CONSTRAINT CHK_Cliente_Contra CHECK (LEN(contrase�a)�>=�6)
+    CONSTRAINT CHK_Cliente_Contra CHECK (LEN(contraseña)>=6)
 );
 
 CREATE TABLE Proveedor (
@@ -23,7 +23,6 @@ CREATE TABLE Proveedor (
     telefono NVARCHAR(30),
     pais NVARCHAR(50) NOT NULL,
     correo NVARCHAR(100) NOT NULL UNIQUE,
-
     CONSTRAINT PK_Proveedor PRIMARY KEY (id_proveedor),
     CONSTRAINT CHK_Proveedor_Correo CHECK (correo LIKE '%@%')
 );
@@ -121,7 +120,7 @@ CREATE TABLE Empleado (
     salario DECIMAL(10,2) NOT NULL,
 
     CONSTRAINT PK_Empleado PRIMARY KEY (id_empleado),
-    CONSTRAINT CHK_Salario CHECK (salario�>�0)
+    CONSTRAINT CHK_Salario CHECK (salario>0)
 );
 
 SELECT * FROM dbo.Cliente;

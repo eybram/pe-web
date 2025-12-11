@@ -41,22 +41,22 @@ INSERT INTO Orden (id_orden, id_cliente, fecha_orden, total, metodo_pago) VALUES
 ('Ord_9', 'Pd8', '2024-05-10', 70.00, 'Tarjeta'),
 ('Ord_10', 'Pd5', '2025-05-22', 40.00, 'Efectivo');
 
-INSERT INTO Detalle_Orden (id_detalle, id_orden, id_producto, cantidad, precio_unitario, subtotal) VALUES
-('D1', 'Ord_1', 'PR1', 1, 25.00, 25.00),
-('D2', 'Ord_1', 'PR3', 2, 10.00, 20.00),
-('D3', 'Ord_1', 'PR7', 2, 8.00, 16.00),
-('D4', 'Ord_2', 'PR2', 1, 35.00, 35.00),
-('D5', 'Ord_3', 'PR1', 1, 25.00, 25.00),
-('D6', 'Ord_3', 'PR2', 1, 35.00, 35.00),
-('D7', 'Ord_4', 'PR3', 1, 10.00, 10.00),
-('D8', 'Ord_5', 'PR4', 1, 12.00, 12.00),
-('D9', 'Ord_5', 'PR3', 2, 10.00, 20.00),
-('D10', 'Ord_6', 'PR10', 2, 20.00, 40.00),
-('D11', 'Ord_7', 'PR7', 4, 8.00, 32.00),
-('D12', 'Ord_8', 'PR5', 1, 28.00, 28.00),
-('D13', 'Ord_9', 'PR8', 2, 32.00, 64.00),
-('D14', 'Ord_9', 'PR3', 1, 10.00, 10.00),
-('D15', 'Ord_10', 'PR6', 1, 22.00, 22.00);
+INSERT INTO Detalle_Orden (id_detalle, id_orden, id_producto, cantidad, precio_unitario) VALUES
+('D1', 'Ord_1', 'PR1', 1, 25.00),
+('D2', 'Ord_1', 'PR3', 2, 10.00),
+('D3', 'Ord_1', 'PR7', 2, 8.00),
+('D4', 'Ord_2', 'PR2', 1, 35.00),
+('D5', 'Ord_3', 'PR1', 1, 25.00),
+('D6', 'Ord_3', 'PR2', 1, 35.00),
+('D7', 'Ord_4', 'PR3', 1, 10.00),
+('D8', 'Ord_5', 'PR4', 1, 12.00),
+('D9', 'Ord_5', 'PR3', 2, 10.00),
+('D10', 'Ord_6', 'PR10', 2, 20.00),
+('D11', 'Ord_7', 'PR7', 4, 8.00),
+('D12', 'Ord_8', 'PR5', 1, 28.00),
+('D13', 'Ord_9', 'PR8', 2, 32.00),
+('D14', 'Ord_9', 'PR3', 1, 10.00),
+('D15', 'Ord_10', 'PR6', 1, 22.00);
 
 INSERT INTO Inventario_Movimientos (id_mov, id_producto, tipo_movimiento, cantidad, fecha_movimiento, descripcion) VALUES
 ('MOV1', 'PR1', 'ENTRADA', 50, '2025-01-10', 'Lote inicial'),
