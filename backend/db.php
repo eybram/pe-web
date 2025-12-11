@@ -106,6 +106,17 @@ function getClientes(): array
     return fetchAll('SELECT id_cliente, nombre, apellido, cedula, correo, telefono, provincia, fecha_registro FROM Cliente ORDER BY fecha_registro DESC');
 }
 
+function getClienteById(string $id_cliente): ?array
+{
+    return fetchOne('SELECT id_cliente, nombre, apellido, cedula, correo, telefono, provincia, fecha_registro FROM Cliente WHERE id_cliente = ?', [$id_cliente]);
+}
+
+function findClienteByEmailOrCedulaOrId(string $q): ?array
+{
+    $q = trim($q);
+    return fetchOne('SELECT id_cliente, nombre, apellido, cedula, correo, telefono, provincia, fecha_registro FROM Cliente WHERE correo = ? OR cedula = ? OR id_cliente = ?', [$q, $q, $q]);
+}
+
 function getProveedores(): array
 {
     return fetchAll('SELECT id_proveedor, nombre_proveedor, contacto, telefono, pais, correo FROM Proveedor');

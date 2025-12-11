@@ -82,10 +82,17 @@ export function Home() {
   }, []);
 
   const DEFAULT_CLIENT_ID = 'CLI-001';
+  const [auth, setAuth] = useState<{ clientId?: string; name?: string }>(() => ({
+    clientId: localStorage.getItem('clientId') || undefined,
+    name: localStorage.getItem('clientName') || undefined,
+  }));
 
   const handleLogout = () => {
     setShowLogoutModal(false);
     // Handle logout logic here
+    localStorage.removeItem('clientId');
+    localStorage.removeItem('clientName');
+    setAuth({});
     console.log('User logged out');
   };
 
@@ -97,6 +104,8 @@ export function Home() {
         onCartClick={() => setShowCart(true)}
         onMenuClick={() => setSidebarOpen(true)}
         onLoginClick={() => setShowLogin(true)}
+        userName={auth.name}
+        onProfileClick={() => setShowProfile(true)}
       />
 
       <div className="flex">
@@ -178,7 +187,10 @@ export function Home() {
       {showLogin && (
         <Login
           onClose={() => setShowLogin(false)}
-          onSuccess={() => setShowLogin(false)}
+          onSuccess={(id, name) => {
+            setAuth({ clientId: id, name });
+            setShowLogin(false);
+          }}
           onOpenRegister={() => {
             setShowLogin(false);
             setShowRegister(true);
@@ -201,7 +213,7 @@ export function Home() {
         <Checkout
           cartItems={cart}
           total={total}
-          clientId={DEFAULT_CLIENT_ID}
+          clientId={auth.clientId || DEFAULT_CLIENT_ID}
           onClose={() => setShowCheckout(false)}
           onSuccess={() => {
             setShowCheckout(false);
@@ -211,7 +223,7 @@ export function Home() {
       )}
 
       {showProfile && (
-        <Profile onClose={() => setShowProfile(false)} clientId={DEFAULT_CLIENT_ID} />
+        <Profile onClose={() => setShowProfile(false)} clientId={auth.clientId || DEFAULT_CLIENT_ID} />
       )}
 
       {showSettings && (
@@ -219,7 +231,7 @@ export function Home() {
       )}
 
       {showHistory && (
-        <History onClose={() => setShowHistory(false)} clientId={DEFAULT_CLIENT_ID} />
+        <History onClose={() => setShowHistory(false)} clientId={auth.clientId || DEFAULT_CLIENT_ID} />
       )}
 
       {showLogoutModal && (

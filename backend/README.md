@@ -73,3 +73,6 @@ Notes:
     "items": [{"id_producto": "PROD-1","cantidad":1,"precio_unitario":20.0}],
     "metodo_pago": "tarjeta"
   }
+
+Login endpoint:
+- `POST /api/login.php` expects JSON `{ "q": "email|cedula|id" }` and returns `{ id_cliente, nombre, apellido, correo }` if a matching client is found. This is a minimal login helper for local dev; it does not verify password.

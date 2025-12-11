@@ -3,7 +3,7 @@ import { X } from 'lucide-react';
 
 interface LoginProps {
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (clientId: string, name?: string) => void;
   onOpenRegister?: () => void;
 }
 
@@ -13,9 +13,21 @@ export function Login({ onClose, onSuccess, onOpenRegister }: LoginProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email && password) {
-      onSuccess();
-    }
+    if (!email) return;
+    (async () => {
+      try {
+        const { fetchJson } = await import('../utils/api');
+        const data = await fetchJson('/login.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q: email }) });
+        const id = data.id_cliente;
+        const name = (data.nombre || '') + (data.apellido ? ' ' + data.apellido : '');
+        localStorage.setItem('clientId', id);
+        if (name) localStorage.setItem('clientName', name);
+        onSuccess(id, name);
+      } catch (err) {
+        console.error('login failed', err);
+        alert('No se encontró usuario con ese correo o cédula');
+      }
+    })();
   };
 
   return (
@@ -39,13 +51,13 @@ export function Login({ onClose, onSuccess, onOpenRegister }: LoginProps) {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="text-gray-400 text-xs font-bold mb-2 block">
-              Email
+              Correo o cédula
             </label>
             <input
-              type="email"
+              type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="ejemplo@gmail.com"
+              placeholder="correo@example.com o 8-123-456"
               className="w-full px-4 py-3 bg-gray-800 text-white placeholder-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] border border-gray-700"
               required
             />

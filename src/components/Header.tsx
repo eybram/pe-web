@@ -7,9 +7,11 @@ interface HeaderProps {
   onCartClick: () => void;
   onMenuClick: () => void;
   onLoginClick: () => void;
+  userName?: string;
+  onProfileClick?: () => void;
 }
 
-export function Header({ onSearch, cartItemCount, onCartClick, onMenuClick, onLoginClick }: HeaderProps) {
+export function Header({ onSearch, cartItemCount, onCartClick, onMenuClick, onLoginClick, userName, onProfileClick }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,9 +39,16 @@ export function Header({ onSearch, cartItemCount, onCartClick, onMenuClick, onLo
         </div>
 
         <div className="hidden md:flex items-center gap-6">
-          <button onClick={onLoginClick} className="text-black font-bold hover:opacity-80 transition flex items-center gap-2">
-            👤 LOGIN
-          </button>
+          {userName ? (
+            <button onClick={() => onProfileClick && onProfileClick()} className="text-black font-bold flex items-center gap-2 hover:opacity-80 transition">
+              <span>👋</span>
+              <span>{userName}</span>
+            </button>
+          ) : (
+            <button onClick={onLoginClick} className="text-black font-bold hover:opacity-80 transition flex items-center gap-2">
+              👤 LOGIN
+            </button>
+          )}
 
           <div className="relative w-80">
             <input
