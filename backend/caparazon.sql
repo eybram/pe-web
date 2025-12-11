@@ -23,7 +23,6 @@ CREATE TABLE Proveedor (
     telefono NVARCHAR(30),
     pais NVARCHAR(50) NOT NULL,
     correo NVARCHAR(100) NOT NULL UNIQUE,
-
     CONSTRAINT PK_Proveedor PRIMARY KEY (id_proveedor),
     CONSTRAINT CHK_Proveedor_Correo CHECK (correo LIKE '%@%')
 );
