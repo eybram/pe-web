@@ -17,7 +17,7 @@ export function Login({ onClose, onSuccess, onOpenRegister }: LoginProps) {
     (async () => {
       try {
         const { fetchJson } = await import('../utils/api');
-        const data = await fetchJson('/login.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q: email }) });
+        const data = await fetchJson('/login.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q: email, password }) });
         const id = data.id_cliente;
         const name = (data.nombre || '') + (data.apellido ? ' ' + data.apellido : '');
         localStorage.setItem('clientId', id);

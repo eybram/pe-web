@@ -1,21 +1,21 @@
 ﻿use [Broken Pocket]
 
-INSERT INTO Cliente (id_cliente, nombre, apellido, cedula, correo, telefono, provincia, fecha_registro) VALUES
-('Pd1', 'Ana', 'Castillo', '8-945-1234', 'ana.c@gmail.com', '6789-1122', 'Panamá', '2025-01-12'),
-('Pd2', 'Marcos', 'Gutiérrez', '4-567-902', 'marcos.gt@gmail.com', '6001-8877', 'Chiriquí', '2025-02-10'),
-('Pd3', 'Luis', 'Moreno', '3-1023-444', 'luism@example.com', '6999-3321', 'Veraguas', '2023-03-05'),
-('Pd4', 'Sofía', 'Ríos', '2-788-331', 'sofri@gmail.com', '6123-9876', 'Panamá Oeste', '2024-03-20'),
-('Pd5', 'Daniel', 'Vega', '1-332-819', 'daniel.vg@gmail.com', '6555-1234', 'Colón', '2024-04-01'),
-('Pd6', 'Karla', 'Hernández', '9-122-432', 'karla.hz@gmail.com', '6990-1212', 'Herrera', '2025-04-10'),
-('Pd7', 'Jorge', 'Rivas', '6-332-728', 'jrivas90@gmail.com', '6988-4411', 'Coclé', '2024-05-02'),
-('Pd8', 'Rebeca', 'Lasso', '8-112-567', 'reb.lasso@gmail.com', '6221-4789', 'Panamá', '2024-05-22');
+INSERT INTO Cliente (id_cliente, nombre, apellido, cedula, correo, telefono, provincia, fecha_registro, contraseña) VALUES
+('Pd1', 'Ana', 'Castillo', '8-945-1234', 'ana.c@gmail.com', '6789-1122', 'Panamá', '2024-01-12', 'AnaC2024!'),
+('Pd2', 'Marcos', 'Gutiérrez', '4-567-902', 'marcos.gt@gmail.com', '6001-8877', 'Chiriquí', '2024-02-10', 'MarcosG#45'),
+('Pd3', 'Luis', 'Moreno', '3-1023-444', 'luism@example.com', '6999-3321', 'Veraguas', '2024-03-05', 'LuisM_789'),
+('Pd4', 'Sofía', 'Ríos', '2-788-331', 'sofri@gmail.com', '6123-9876', 'Panamá Oeste', '2024-03-20', 'SofiaR*12'),
+('Pd5', 'Daniel', 'Vega', '1-332-819', 'daniel.vg@gmail.com', '6555-1234', 'Colón', '2024-04-01', 'DanielV@22'),
+('Pd6', 'Karla', 'Hernández', '9-122-432', 'karla.hz@gmail.com', '6990-1212', 'Herrera', '2024-04-10', 'KarlaH_55'),
+('Pd7', 'Jorge', 'Rivas', '6-332-728', 'jrivas90@gmail.com', '6988-4411', 'Coclé', '2024-05-02', 'JorgeR#88'),
+('Pd8', 'Rebeca', 'Lasso', '8-112-567', 'reb.lasso@gmail.com', '6221-4789', 'Panamá', '2024-05-22', 'RebecaL2024');
 
 INSERT INTO Proveedor (id_proveedor, nombre_proveedor, contacto, telefono, pais, correo) VALUES
 ('EM1', 'Gaming World Supply', 'Karen Smith', '+1 555-222', 'USA', 'contact@gwsupply.com'),
-('EM2', 'PlayMerch LATAM', 'Ricardo Torres', '‪+507 6000-1122‬', 'Panamá', 'ventas@playmerch.com'),
+('EM2', 'PlayMerch LATAM', 'Ricardo Torres', '+507 6000-1122', 'Panamá', 'ventas@playmerch.com'),
 ('EM3', 'HaloCollectibles Inc', 'Mark Green', '+1 555-300', 'USA', 'support@halocollect.com'),
 ('EM4', 'Funko International', 'Jhon Atkins', '+1 555-902', 'USA', 'info@funko.com'),
-('EM5', 'GeekMerch Europe', 'Johana Müller', '‪+49 331-882‬', 'Alemania', 'jmuller@geekmerch.de');
+('EM5', 'GeekMerch Europe', 'Johana Müller', '+49 331-882', 'Alemania', 'jmuller@geekmerch.de');
 
 INSERT INTO Producto (id_producto, nombre_producto, categoria, franquicia, precio, stock, id_proveedor) VALUES
 ('PR1', 'Camiseta Zelda Master Sword', 'Camiseta', 'Zelda', 25.00, 50, 'EM1'),

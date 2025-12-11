@@ -76,3 +76,19 @@ Notes:
 
 Login endpoint:
 - `POST /api/login.php` expects JSON `{ "q": "email|cedula|id" }` and returns `{ id_cliente, nombre, apellido, correo }` if a matching client is found. This is a minimal login helper for local dev; it does not verify password.
+
+You can also include a password to verify credentials: send `{ "q": "email|cedula|id", "password": "..." }` — the endpoint will check the hash in `Auth` when present and return `401` on mismatch.
+
+Register endpoint:
+- `POST /api/register.php` expects JSON `{ "name": string, "email": string, "password": string, "confirm": string, "cedula"?: string }` and will create a new `Cliente` record and store password hash in `Auth`.
+  On success it returns `{ id_cliente, nombre, apellido }`.
+
+Testing register via curl:
+
+```bash
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"name":"Test User","email":"test@example.com","password":"password123","confirm":"password123","cedula":"12345678"}' \
+  http://127.0.0.1:8000/api/register.php
+```
+
+Note: The `register.php` endpoint will check for existing email or cedula and return `409` if duplicate.
