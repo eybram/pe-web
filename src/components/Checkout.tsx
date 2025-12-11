@@ -7,9 +7,10 @@ interface CheckoutProps {
   total: number;
   onClose: () => void;
   onSuccess: () => void;
+  clientId?: string;
 }
 
-export function Checkout({ cartItems, total, onClose, onSuccess }: CheckoutProps) {
+export function Checkout({ cartItems, total, onClose, onSuccess, clientId = 'CLI-001' }: CheckoutProps) {
   const [paymentMethod, setPaymentMethod] = useState('email');
   const [formData, setFormData] = useState({
     email: '',
@@ -24,10 +25,19 @@ export function Checkout({ cartItems, total, onClose, onSuccess }: CheckoutProps
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.email && formData.region && formData.name && formData.lastname && formData.address) {
+    if (!(formData.email && formData.region && formData.name && formData.lastname && formData.address)) return;
+
+    // Build items payload: id_producto, cantidad, precio_unitario
+    const items = cartItems.map(ci => ({ id_producto: ci.product.id, cantidad: ci.quantity, precio_unitario: ci.product.price }));
+    try {
+      const { fetchJson } = await import('../utils/api');
+      const data = await fetchJson('/create_orden.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_cliente: clientId, items, metodo_pago: paymentMethod }) });
+      // success
       onSuccess();
+    } catch (err) {
+      alert('Error creando la orden: ' + err);
     }
   };
 
