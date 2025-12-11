@@ -208,3 +208,44 @@ function getEmpleadoById(string $id_empleado): ?array
 {
     return fetchOne('SELECT id_empleado, nombre, apellido, cargo, correo, salario FROM Empleado WHERE id_empleado = ?', [$id_empleado]);
 }
+
+/**
+ * Create a new Cliente and return the id
+ */
+function createCliente(array $data): string
+{
+    $id = generateId('CLI-');
+    $nombre = $data['nombre'] ?? '';
+    $apellido = $data['apellido'] ?? '';
+    $cedula = $data['cedula'] ?? null;
+    $correo = $data['correo'] ?? null;
+    $telefono = $data['telefono'] ?? null;
+    $provincia = $data['provincia'] ?? null;
+    $fecha_registro = date('Y-m-d');
+
+    $pdo = getPDO();
+    $stmt = $pdo->prepare('INSERT INTO Cliente (id_cliente, nombre, apellido, cedula, correo, telefono, provincia, fecha_registro) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+    $stmt->execute([$id, $nombre, $apellido, $cedula, $correo, $telefono, $provincia, $fecha_registro]);
+    return $id;
+}
+
+function createAuth(string $id_cliente, string $passwordHash): void
+{
+    $pdo = getPDO();
+    // Ensure Auth table exists for SQL Server and MySQL
+    $driver = strtolower(getenv('DB_DRIVER') ?: 'sqlsrv');
+    if ($driver === 'sqlsrv') {
+        $pdo->exec("IF OBJECT_ID('dbo.Auth', 'U') IS NULL BEGIN CREATE TABLE Auth (id_cliente NVARCHAR(20) PRIMARY KEY, password_hash NVARCHAR(255)) END");
+    } else {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS Auth (id_cliente VARCHAR(20) PRIMARY KEY, password_hash VARCHAR(255))");
+    }
+
+    $stmt = $pdo->prepare('INSERT INTO Auth (id_cliente, password_hash) VALUES (?, ?)');
+    $stmt->execute([$id_cliente, $passwordHash]);
+}
+
+function findAuthHashByCliente(string $id_cliente): ?string
+{
+    $row = fetchOne('SELECT password_hash FROM Auth WHERE id_cliente = ?', [$id_cliente]);
+    return $row['password_hash'] ?? null;
+}

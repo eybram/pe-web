@@ -3,7 +3,7 @@ import { X } from 'lucide-react';
 
 interface RegisterProps {
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (id?: string, name?: string) => void;
   onOpenLogin?: () => void;
 }
 
@@ -15,9 +15,22 @@ export function Register({ onClose, onSuccess, onOpenLogin }: RegisterProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email && password && password === confirm) {
-      onSuccess();
-    }
+    if (!(email && password && password === confirm)) return;
+    (async () => {
+      try {
+        const { fetchJson } = await import('../utils/api');
+        const response = await fetchJson('/register.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, lastname: '', email, password, confirm }) });
+        // Map returned id and name to localStorage and pass to parent
+        const id = response.id_cliente;
+        const nameResp = response.nombre;
+        localStorage.setItem('clientId', id);
+        localStorage.setItem('clientName', nameResp);
+        onSuccess && onSuccess(id, nameResp);
+      } catch (err) {
+        console.error('register failed', err);
+        alert('Could not register: ' + err);
+      }
+    })();
   };
 
   return (

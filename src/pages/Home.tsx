@@ -201,7 +201,12 @@ export function Home() {
       {showRegister && (
         <Register
           onClose={() => setShowRegister(false)}
-          onSuccess={() => setShowRegister(false)}
+          onSuccess={(id, name) => {
+            if (id) {
+              setAuth({ clientId: id, name });
+            }
+            setShowRegister(false);
+          }}
           onOpenLogin={() => {
             setShowRegister(false);
             setShowLogin(true);
