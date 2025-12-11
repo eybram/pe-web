@@ -1,4 +1,5 @@
 import { X, Calendar } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 interface HistoryItem {
   id: string;
@@ -9,36 +10,48 @@ interface HistoryItem {
 
 interface HistoryProps {
   onClose: () => void;
+  clientId?: string;
 }
 
-export function History({ onClose }: HistoryProps) {
-  // Mock data - should be fetched from backend
-  const historyItems: HistoryItem[] = [
-    {
-      id: '1',
-      name: 'Figura human',
-      image: '🧑',
-      date: '12/04/2021',
-    },
-    {
-      id: '2',
-      name: 'perro tobi',
-      image: '🐕',
-      date: '03/03/2021',
-    },
-    {
-      id: '3',
-      name: 'The Heavy',
-      image: '📦',
-      date: '21/01/2021',
-    },
-    {
-      id: '4',
-      name: 'Pines Enamel Deltarune',
-      image: '📌',
-      date: '05/01/2021',
-    },
-  ];
+export function History({ onClose, clientId = 'CLI-001' }: HistoryProps) {
+  const [historyItems, setHistoryItems] = useState<HistoryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      try {
+        const { fetchJson } = await import('../utils/api');
+        const ordenes = await fetchJson('/ordenes.php?id_cliente=' + encodeURIComponent(clientId));
+        const items: HistoryItem[] = [];
+        for (const ord of ordenes) {
+          const detalles = await fetchJson('/orden_detalles.php?id_orden=' + encodeURIComponent(ord.id_orden));
+          for (const det of detalles) {
+            // fetch product info
+            const prod = await fetchJson('/producto.php?id=' + encodeURIComponent(det.id_producto));
+            items.push({ id: det.id_detalle, name: prod.nombre_producto || 'Producto desconocido', image: prod.image || '📦', date: ord.fecha_orden });
+          }
+        }
+        setHistoryItems(items);
+      } catch (e) {
+        console.error('Error loading history', e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, [clientId]);
+  
+  // show loading while fetching
+  if (loading) {
+    return (
+      <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+        <div className="bg-[#001937] border-4 border-[#ff5d23] rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto p-8 text-white">
+          Cargando historial...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">

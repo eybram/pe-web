@@ -1,15 +1,21 @@
 import { X, User, Mail, Lock, Image, Globe } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface ProfileProps {
   onClose: () => void;
+  clientId?: string;
 }
 
-export function Profile({ onClose }: ProfileProps) {
+export function Profile({ onClose, clientId = 'CLI-001' }: ProfileProps) {
   const [username, setUsername] = useState('Usuario invitado 1');
   const [email, setEmail] = useState('usuarioinvitado1@brokenpocket.com.pa');
+  const [telefono, setTelefono] = useState('');
+  const [provincia, setProvincia] = useState('');
+  const [fechaRegistro, setFechaRegistro] = useState('');
   const [password, setPassword] = useState('**********');
   const [language, setLanguage] = useState('es');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showUsernameEdit, setShowUsernameEdit] = useState(false);
   const [showPasswordEdit, setShowPasswordEdit] = useState(false);
 
@@ -18,8 +24,32 @@ export function Profile({ onClose }: ProfileProps) {
   };
 
   const handleSavePassword = () => {
-    setShowPasswordEdit(false);
+    if (newPassword && newPassword === confirmPassword) {
+      setPassword('**********');
+      setNewPassword('');
+      setConfirmPassword('');
+      setShowPasswordEdit(false);
+    } else {
+      alert('Las contraseñas no coinciden');
+    }
   };
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const { fetchJson } = await import('../utils/api');
+        const data = await fetchJson('/cliente.php?id=' + encodeURIComponent(clientId));
+        setUsername(data.nombre + (data.apellido ? (' ' + data.apellido) : ''));
+        setEmail(data.correo || '');
+        setTelefono(data.telefono || '');
+        setProvincia(data.provincia || '');
+        setFechaRegistro(data.fecha_registro || '');
+      } catch (e) {
+        console.error('Could not load cliente', e);
+      }
+    };
+    load();
+  }, [clientId]);
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -111,11 +141,15 @@ export function Profile({ onClose }: ProfileProps) {
                 <input
                   type="password"
                   placeholder="Nueva contraseña"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
                   className="px-4 py-2 rounded-lg border-2 border-[#ff5d23] bg-[#001937] text-white"
                 />
                 <input
                   type="password"
                   placeholder="Confirmar contraseña"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                   className="px-4 py-2 rounded-lg border-2 border-[#ff5d23] bg-[#001937] text-white"
                 />
                 <button
@@ -135,6 +169,15 @@ export function Profile({ onClose }: ProfileProps) {
               Correo electrónico
             </h3>
             <p className="text-lg text-[#ff5d23]">{email}</p>
+            {telefono && (
+              <p className="text-sm text-gray-300">Teléfono: {telefono}</p>
+            )}
+            {provincia && (
+              <p className="text-sm text-gray-300">Provincia: {provincia}</p>
+            )}
+            {fechaRegistro && (
+              <p className="text-sm text-gray-300">Fecha registro: {fechaRegistro}</p>
+            )}
           </div>
 
           {/* Language */}
@@ -144,10 +187,15 @@ export function Profile({ onClose }: ProfileProps) {
               Idioma
             </h3>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 rounded-full bg-[#ff5d23]"></div>
-                <span className="text-lg text-[#ff5d23]">Español</span>
-              </div>
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="px-4 py-2 rounded-lg border-2 border-[#ff5d23] bg-[#001937] text-white"
+              >
+                <option value="es">Español</option>
+                <option value="en">English</option>
+                <option value="pt">Português</option>
+              </select>
             </div>
           </div>
         </div>
