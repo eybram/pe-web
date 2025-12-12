@@ -46,8 +46,6 @@ export function Home() {
 
   const handleLogout = () => {
     setShowLogoutModal(false);
-    // Handle logout logic here
-    console.log('User logged out');
   };
 
   return (
@@ -165,7 +163,6 @@ export function Home() {
           onClose={() => setShowCheckout(false)}
           onSuccess={() => {
             setShowCheckout(false);
-            // Could add success message or clear cart here
           }}
         />
       )}
