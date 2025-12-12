@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Header } from '../components/Header';
 import { Sidebar } from '../components/Sidebar';
 import { ProductCard } from '../components/ProductCard';
@@ -12,8 +12,7 @@ import { Settings } from '../components/Settings';
 import { History } from '../components/History';
 import { LogoutModal } from '../components/LogoutModal';
 import { Product, Category } from '../types';
-// Keep a fallback list locally for development if API is unavailable
-import { products as fallbackProducts } from '../data/products';
+import { products, categories } from '../data/products';
 import { useCart } from '../hooks/useCart';
 
 export function Home() {
@@ -30,14 +29,8 @@ export function Home() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { cart, addToCart, removeFromCart, updateQuantity, total, itemCount } = useCart();
-  const [productsList, setProductsList] = useState<Product[]>(fallbackProducts);
-  const [categoriesList, setCategoriesList] = useState<Category[]>(() => {
-    const cats: Record<string, number> = {};
-    fallbackProducts.forEach(p => cats[p.category] = (cats[p.category] || 0) + 1);
-    return Object.keys(cats).map(key => ({ id: key, name: key.toUpperCase(), count: cats[key] }));
-  });
 
-  const filteredProducts = productsList.filter(product => {
+  const filteredProducts = products.filter(product => {
     const matchesCategory = !selectedCategory || product.category === selectedCategory;
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           product.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -51,37 +44,6 @@ export function Home() {
     }
   };
 
-  // Fetch products from backend whenever the page mounts
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const { fetchJson } = await import('../utils/api');
-        const data = await fetchJson('/productos.php');
-        // Map DB fields to Product type
-        const mapped: Product[] = data.map((p: any) => ({
-          id: p.id_producto,
-          name: p.nombre_producto,
-          price: parseFloat(p.precio) || 0,
-          image: p.image || '',
-          description: p.categoria || p.franquicia || '',
-          category: p.categoria || 'otros',
-          sizes: []
-        }));
-        setProductsList(mapped);
-
-        // compute categories
-        const cats: Record<string, number> = {};
-        mapped.forEach(prod => cats[prod.category] = (cats[prod.category] || 0) + 1);
-        const categoriesArr = Object.keys(cats).map(key => ({ id: key, name: key.toUpperCase(), count: cats[key] }));
-        setCategoriesList(categoriesArr);
-      } catch (e) {
-        console.error('Could not load products from API, using fallback', e);
-      }
-    };
-    load();
-  }, []);
-
-  const DEFAULT_CLIENT_ID = 'CLI-001';
   const [auth, setAuth] = useState<{ clientId?: string; name?: string }>(() => ({
     clientId: localStorage.getItem('clientId') || undefined,
     name: localStorage.getItem('clientName') || undefined,
@@ -110,7 +72,7 @@ export function Home() {
 
       <div className="flex">
         <Sidebar
-          categories={categoriesList}
+          categories={categories}
           selectedCategory={selectedCategory}
           onCategorySelect={setSelectedCategory}
           isOpen={sidebarOpen}
@@ -137,7 +99,7 @@ export function Home() {
           <div className="max-w-7xl mx-auto px-4 py-8">
             <h2 className="text-2xl font-black text-[#ff5d23] mb-8">
               {selectedCategory
-                ? categoriesList.find(c => c.id === selectedCategory)?.name
+                ? categories.find(c => c.id === selectedCategory)?.name
                 : 'TODOS LOS PRODUCTOS'}
             </h2>
 

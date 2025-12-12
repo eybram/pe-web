@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 interface LoginProps {
   onClose: () => void;
@@ -10,24 +11,43 @@ interface LoginProps {
 export function Login({ onClose, onSuccess, onOpenRegister }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
-    (async () => {
-      try {
-        const { fetchJson } = await import('../utils/api');
-        const data = await fetchJson('/login.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q: email, password }) });
-        const id = data.id_cliente;
-        const name = (data.nombre || '') + (data.apellido ? ' ' + data.apellido : '');
-        localStorage.setItem('clientId', id);
-        if (name) localStorage.setItem('clientName', name);
-        onSuccess(id, name);
-      } catch (err) {
-        console.error('login failed', err);
-        alert('No se encontró usuario con ese correo o cédula');
-      }
-    })();
+    if (!email || !password) return;
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) throw signInError;
+      if (!data.user) throw new Error('No user data');
+
+      const { data: cliente } = await supabase
+        .from('clientes')
+        .select('id, nombre, apellido')
+        .eq('user_id', data.user.id)
+        .maybeSingle();
+
+      if (!cliente) throw new Error('Cliente not found');
+
+      const name = `${cliente.nombre} ${cliente.apellido}`;
+      localStorage.setItem('clientId', cliente.id);
+      localStorage.setItem('clientName', name);
+      onSuccess(cliente.id, name);
+    } catch (err) {
+      console.error('login failed', err);
+      setError('Credenciales inválidas. Intenta de nuevo.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -49,16 +69,23 @@ export function Login({ onClose, onSuccess, onOpenRegister }: LoginProps) {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          {error && (
+            <div className="bg-red-900/20 border border-red-500 text-red-200 px-4 py-2 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
+
           <div>
             <label className="text-gray-400 text-xs font-bold mb-2 block">
-              Correo o cédula
+              Correo
             </label>
             <input
-              type="text"
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="correo@example.com o 8-123-456"
+              placeholder="correo@example.com"
               className="w-full px-4 py-3 bg-gray-800 text-white placeholder-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] border border-gray-700"
+              disabled={loading}
               required
             />
           </div>
@@ -73,16 +100,17 @@ export function Login({ onClose, onSuccess, onOpenRegister }: LoginProps) {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••••••"
               className="w-full px-4 py-3 bg-gray-800 text-[#ff5d23] placeholder-[#ff5d23]/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] border border-gray-700"
+              disabled={loading}
               required
             />
           </div>
 
           <button
             type="submit"
-            disabled={!email || !password}
+            disabled={!email || !password || loading}
             className="w-full bg-gray-700 text-[#ff5d23] font-bold py-3 rounded-lg hover:bg-gray-600 transition disabled:opacity-50 disabled:cursor-not-allowed mt-6"
           >
-            Continúe
+            {loading ? 'Iniciando sesión...' : 'Continúe'}
           </button>
         </form>
 

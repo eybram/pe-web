@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { CartItem } from '../types';
+import { supabase } from '../lib/supabase';
 
 interface CheckoutProps {
   cartItems: CartItem[];
@@ -10,7 +11,7 @@ interface CheckoutProps {
   clientId?: string;
 }
 
-export function Checkout({ cartItems, total, onClose, onSuccess, clientId = 'CLI-001' }: CheckoutProps) {
+export function Checkout({ cartItems, total, onClose, onSuccess, clientId = '' }: CheckoutProps) {
   const [paymentMethod, setPaymentMethod] = useState('email');
   const [formData, setFormData] = useState({
     email: '',
@@ -19,6 +20,8 @@ export function Checkout({ cartItems, total, onClose, onSuccess, clientId = 'CLI
     lastname: '',
     address: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -29,15 +32,49 @@ export function Checkout({ cartItems, total, onClose, onSuccess, clientId = 'CLI
     e.preventDefault();
     if (!(formData.email && formData.region && formData.name && formData.lastname && formData.address)) return;
 
-    // Build items payload: id_producto, cantidad, precio_unitario
-    const items = cartItems.map(ci => ({ id_producto: ci.product.id, cantidad: ci.quantity, precio_unitario: ci.product.price }));
+    setLoading(true);
+    setError('');
+
     try {
-      const { fetchJson } = await import('../utils/api');
-      const data = await fetchJson('/create_orden.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_cliente: clientId, items, metodo_pago: paymentMethod }) });
-      // success
+      const { data: orden, error: ordenError } = await supabase
+        .from('ordenes')
+        .insert([
+          {
+            cliente_id: clientId || null,
+            metodo_pago: paymentMethod,
+            email: formData.email,
+            nombre: formData.name,
+            apellido: formData.lastname,
+            provincia: formData.region,
+            direccion: formData.address,
+            total: total,
+          },
+        ])
+        .select()
+        .maybeSingle();
+
+      if (ordenError) throw ordenError;
+      if (!orden) throw new Error('No order created');
+
+      const detalles = cartItems.map(ci => ({
+        orden_id: orden.id,
+        producto_id: ci.product.id,
+        cantidad: ci.quantity,
+        precio_unitario: ci.product.price,
+      }));
+
+      const { error: detallesError } = await supabase
+        .from('orden_detalles')
+        .insert(detalles);
+
+      if (detallesError) throw detallesError;
+
       onSuccess();
     } catch (err) {
-      alert('Error creando la orden: ' + err);
+      console.error('order creation failed', err);
+      setError(err instanceof Error ? err.message : 'Error creando la orden. Intenta de nuevo.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -63,38 +100,47 @@ export function Checkout({ cartItems, total, onClose, onSuccess, clientId = 'CLI
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              {error && (
+                <div className="bg-red-900/20 border border-red-500 text-red-200 px-4 py-2 rounded-lg text-sm">
+                  {error}
+                </div>
+              )}
+
               {/* Payment Methods */}
               <div className="flex gap-3 justify-center flex-wrap">
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('email')}
+                  disabled={loading}
                   className={`px-8 py-3 rounded-full font-bold border-2 transition ${
                     paymentMethod === 'email'
                       ? 'bg-white text-black border-white'
                       : 'bg-black text-white border-gray-700 hover:border-[#ff5d23]'
-                  }`}
+                  } disabled:opacity-50`}
                 >
                   Email
                 </button>
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('paypal')}
+                  disabled={loading}
                   className={`px-8 py-3 rounded-full font-bold border-2 transition ${
                     paymentMethod === 'paypal'
                       ? 'bg-white text-black border-white'
                       : 'bg-black text-white border-gray-700 hover:border-[#ff5d23]'
-                  }`}
+                  } disabled:opacity-50`}
                 >
                   PayPal
                 </button>
                 <button
                   type="button"
                   onClick={() => setPaymentMethod('google')}
+                  disabled={loading}
                   className={`px-8 py-3 rounded-full font-bold border-2 transition ${
                     paymentMethod === 'google'
                       ? 'bg-white text-black border-white'
                       : 'bg-black text-white border-gray-700 hover:border-[#ff5d23]'
-                  }`}
+                  } disabled:opacity-50`}
                 >
                   Google Pay
                 </button>
@@ -113,7 +159,8 @@ export function Checkout({ cartItems, total, onClose, onSuccess, clientId = 'CLI
                     value={formData.email}
                     onChange={handleInputChange}
                     placeholder="ejemplo@gmail.com"
-                    className="flex-1 py-3 bg-transparent text-white placeholder-gray-600 focus:outline-none"
+                    className="flex-1 py-3 bg-transparent text-white placeholder-gray-600 focus:outline-none disabled:opacity-50"
+                    disabled={loading}
                     required
                   />
                 </div>
@@ -130,7 +177,8 @@ export function Checkout({ cartItems, total, onClose, onSuccess, clientId = 'CLI
                   value={formData.region}
                   onChange={handleInputChange}
                   placeholder="Panamá, Panamá Oeste"
-                  className="w-full px-4 py-3 bg-white text-black placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] font-semibold"
+                  className="w-full px-4 py-3 bg-white text-black placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] font-semibold disabled:opacity-50"
+                  disabled={loading}
                   required
                 />
               </div>
@@ -143,7 +191,8 @@ export function Checkout({ cartItems, total, onClose, onSuccess, clientId = 'CLI
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="Nombre"
-                  className="px-4 py-3 bg-white text-black placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] font-semibold"
+                  className="px-4 py-3 bg-white text-black placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] font-semibold disabled:opacity-50"
+                  disabled={loading}
                   required
                 />
                 <input
@@ -152,7 +201,8 @@ export function Checkout({ cartItems, total, onClose, onSuccess, clientId = 'CLI
                   value={formData.lastname}
                   onChange={handleInputChange}
                   placeholder="Apellido"
-                  className="px-4 py-3 bg-white text-black placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] font-semibold"
+                  className="px-4 py-3 bg-white text-black placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] font-semibold disabled:opacity-50"
+                  disabled={loading}
                   required
                 />
               </div>
@@ -168,17 +218,18 @@ export function Checkout({ cartItems, total, onClose, onSuccess, clientId = 'CLI
                   value={formData.address}
                   onChange={handleInputChange}
                   placeholder="Calle principal, casa 5232A"
-                  className="w-full px-4 py-3 bg-white text-black placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] font-semibold"
+                  className="w-full px-4 py-3 bg-white text-black placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ff5d23] font-semibold disabled:opacity-50"
+                  disabled={loading}
                   required
                 />
               </div>
 
               <button
                 type="submit"
-                disabled={!formData.email || !formData.region || !formData.name || !formData.lastname || !formData.address}
+                disabled={loading || !formData.email || !formData.region || !formData.name || !formData.lastname || !formData.address}
                 className="w-full bg-gray-700 text-white font-bold py-3 rounded-lg hover:bg-gray-600 transition disabled:opacity-50 disabled:cursor-not-allowed mt-6"
               >
-                Continúe
+                {loading ? 'Procesando...' : 'Continúe'}
               </button>
             </form>
           </div>

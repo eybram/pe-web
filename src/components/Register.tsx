@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 interface RegisterProps {
   onClose: () => void;
@@ -8,7 +9,6 @@ interface RegisterProps {
 }
 
 export function Register({ onClose, onSuccess, onOpenLogin }: RegisterProps) {
-
   const [nombre, setNombre] = useState('');
   const [apellido, setApellido] = useState('');
   const [cedula, setCedula] = useState('');
@@ -17,43 +17,65 @@ export function Register({ onClose, onSuccess, onOpenLogin }: RegisterProps) {
   const [provincia, setProvincia] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!(correo && password && password === confirm)) return;
+    if (!(correo && password && password === confirm && nombre && apellido && cedula && provincia)) return;
 
-    (async () => {
-      try {
-        const { fetchJson } = await import('../utils/api');
+    if (password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
 
-        const response = await fetchJson('/register.php', { 
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+    setLoading(true);
+    setError('');
+
+    try {
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: correo,
+        password,
+      });
+
+      if (signUpError) throw signUpError;
+      if (!data.user) throw new Error('No user data returned');
+
+      const { error: clientError } = await supabase
+        .from('clientes')
+        .insert([
+          {
+            user_id: data.user.id,
             nombre,
             apellido,
             cedula,
-            correo,
-            telefono,
+            email: correo,
+            telefono: telefono || null,
             provincia,
-            contraseña: password,
-            confirm
-          })
-        });
+          },
+        ]);
 
-        const id = response.id_cliente;
-        const nameResp = response.nombre;
+      if (clientError) throw clientError;
 
-        localStorage.setItem('clientId', id);
-        localStorage.setItem('clientName', nameResp);
+      const { data: cliente } = await supabase
+        .from('clientes')
+        .select('id')
+        .eq('user_id', data.user.id)
+        .maybeSingle();
 
-        onSuccess && onSuccess(id, nameResp);
+      if (!cliente) throw new Error('Cliente not created');
 
-      } catch (err) {
-        console.error('register failed', err);
-        alert('No se pudo registrar: ' + err);
-      }
-    })();
+      const fullName = `${nombre} ${apellido}`;
+      localStorage.setItem('clientId', cliente.id);
+      localStorage.setItem('clientName', fullName);
+
+      onSuccess?.(cliente.id, fullName);
+    } catch (err) {
+      console.error('register failed', err);
+      setError(err instanceof Error ? err.message : 'No se pudo registrar. Intenta de nuevo.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -70,7 +92,12 @@ export function Register({ onClose, onSuccess, onOpenLogin }: RegisterProps) {
         <h1 className="text-3xl font-black text-[#ff5d23] text-center mb-2">BROKEN POCKET</h1>
         <h2 className="text-white font-bold text-lg text-center mb-8">Registrarse</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 max-h-96 overflow-y-auto">
+          {error && (
+            <div className="bg-red-900/20 border border-red-500 text-red-200 px-4 py-2 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
 
           {/* Nombre */}
           <div>
@@ -81,6 +108,7 @@ export function Register({ onClose, onSuccess, onOpenLogin }: RegisterProps) {
               onChange={(e) => setNombre(e.target.value)}
               placeholder="Nombre"
               className="w-full px-4 py-3 bg-gray-800 text-white placeholder-gray-600 rounded-lg border border-gray-700 focus:ring-2 focus:ring-[#ff5d23]"
+              disabled={loading}
               required
             />
           </div>
@@ -94,6 +122,7 @@ export function Register({ onClose, onSuccess, onOpenLogin }: RegisterProps) {
               onChange={(e) => setApellido(e.target.value)}
               placeholder="Apellido"
               className="w-full px-4 py-3 bg-gray-800 text-white placeholder-gray-600 rounded-lg border border-gray-700 focus:ring-2 focus:ring-[#ff5d23]"
+              disabled={loading}
               required
             />
           </div>
@@ -107,6 +136,7 @@ export function Register({ onClose, onSuccess, onOpenLogin }: RegisterProps) {
               onChange={(e) => setCedula(e.target.value)}
               placeholder="Ej: 8-888-888"
               className="w-full px-4 py-3 bg-gray-800 text-white placeholder-gray-600 rounded-lg border border-gray-700 focus:ring-2 focus:ring-[#ff5d23]"
+              disabled={loading}
               required
             />
           </div>
@@ -120,6 +150,7 @@ export function Register({ onClose, onSuccess, onOpenLogin }: RegisterProps) {
               onChange={(e) => setCorreo(e.target.value)}
               placeholder="tu@correo.com"
               className="w-full px-4 py-3 bg-gray-800 text-white placeholder-gray-600 rounded-lg border border-gray-700 focus:ring-2 focus:ring-[#ff5d23]"
+              disabled={loading}
               required
             />
           </div>
@@ -133,6 +164,7 @@ export function Register({ onClose, onSuccess, onOpenLogin }: RegisterProps) {
               onChange={(e) => setTelefono(e.target.value)}
               placeholder="Opcional"
               className="w-full px-4 py-3 bg-gray-800 text-white placeholder-gray-600 rounded-lg border border-gray-700 focus:ring-2 focus:ring-[#ff5d23]"
+              disabled={loading}
             />
           </div>
 
@@ -145,19 +177,21 @@ export function Register({ onClose, onSuccess, onOpenLogin }: RegisterProps) {
               onChange={(e) => setProvincia(e.target.value)}
               placeholder="Provincia"
               className="w-full px-4 py-3 bg-gray-800 text-white placeholder-gray-600 rounded-lg border border-gray-700 focus:ring-2 focus:ring-[#ff5d23]"
+              disabled={loading}
               required
             />
           </div>
 
           {/* Contraseña */}
           <div>
-            <label className="text-gray-400 text-xs font-bold mb-2 block">Contraseña</label>
+            <label className="text-gray-400 text-xs font-bold mb-2 block">Contraseña (mín. 6 caracteres)</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               className="w-full px-4 py-3 bg-gray-800 text-[#ff5d23] placeholder-[#ff5d23]/50 rounded-lg border border-gray-700 focus:ring-2 focus:ring-[#ff5d23]"
+              disabled={loading}
               required
             />
           </div>
@@ -171,16 +205,17 @@ export function Register({ onClose, onSuccess, onOpenLogin }: RegisterProps) {
               onChange={(e) => setConfirm(e.target.value)}
               placeholder="••••••••"
               className="w-full px-4 py-3 bg-gray-800 text-[#ff5d23] placeholder-[#ff5d23]/50 rounded-lg border border-gray-700 focus:ring-2 focus:ring-[#ff5d23]"
+              disabled={loading}
               required
             />
           </div>
 
           <button
             type="submit"
-            disabled={!correo || !password || password !== confirm}
+            disabled={loading || !correo || !password || password !== confirm || !nombre || !apellido || !cedula || !provincia}
             className="w-full bg-gray-700 text-[#ff5d23] font-bold py-3 rounded-lg hover:bg-gray-600 transition disabled:opacity-50 disabled:cursor-not-allowed mt-6"
           >
-            Registrarse
+            {loading ? 'Registrando...' : 'Registrarse'}
           </button>
         </form>
 
